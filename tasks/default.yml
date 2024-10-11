@@ -77,6 +77,8 @@
         state: directory
         recurse: yes
         follow: no
+      become: yes
+      become_user: root
 
     - name: Ensure that install directory is world readable.
       file:
@@ -111,6 +113,8 @@
     path: '{{ spack_install_dir }}/etc/spack/defaults/modules.yaml'
     state: absent
   when: not spack_modules
+  become: yes
+  become_user: root
 
 # If we don't have gcc 8, various Spack commands for installing / mirroring compilers will crap out, since LLVM requires gcc 8 instead
 # of the the CentOS 7 default (4.8.5).  Even for mirroring, Spack seems to concretize for some reason.
@@ -126,6 +130,9 @@
     minute: "0"
     user: '{{ spack_service_user }}'
     job: "{{ spack_install_dir }}/bin/spack clean"
+    name: "Spack clean job"
+  become: yes
+  become_user: root
 
 - name: Add a remote package mirror as a globally available mirror on this host.
   become: yes
